@@ -10,9 +10,16 @@ namespace UnityEssentials
         public static float Distance { get; private set; }
         public static float Height { get; private set; }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        [InitializeOnLoadMethod()]
         public static void Initialize() =>
             PlayerLoopHook.Add<Update>(GetCurrentRenderingCameraInfo);
+
+        public static void SetCameraInfo(Camera camera)
+        {
+            Distance = camera.transform.position.magnitude;
+            Height = camera.transform.position.y;
+            Main = camera;
+        }
 
         private static void GetCurrentRenderingCameraInfo()
         {
@@ -21,30 +28,23 @@ namespace UnityEssentials
             var sceneView = SceneView.lastActiveSceneView;
             if (sceneView != null && sceneView.camera != null && sceneView.hasFocus)
             {
-                Distance = sceneView.camera.transform.position.magnitude;
-                Height = sceneView.camera.transform.position.y;
-                Main = sceneView.camera;
+                SetCameraInfo(sceneView.camera);
                 return;
             }
 #else
             // In Builds, use the main camera directly
             if (Camera.main != null && Main == null)
             {
-                CameraDistance = Camera.main.transform.position.magnitude;
-                CameraHeight = Camera.main.transform.position.y;
-                Main = Camera.main;
+                SetCameraInfo(Camera.main);
                 return;
             }
 #endif
             // Fallback to main camera
             if (Camera.main != null)
             {
-                Distance = Camera.main.transform.position.magnitude;
-                Height = Camera.main.transform.position.y;
-                Main = Camera.main;
+                SetCameraInfo(Camera.main);
                 return;
             }
         }
-
     }
 }

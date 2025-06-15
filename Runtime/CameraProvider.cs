@@ -26,19 +26,13 @@ namespace UnityEssentials
 #if UNITY_EDITOR
             // Prefer SceneView camera if available and focused
             var sceneView = SceneView.lastActiveSceneView;
-            if (sceneView != null && sceneView.camera != null && sceneView.hasFocus)
+            if (sceneView != null && sceneView?.camera != null && sceneView.hasFocus)
             {
                 SetCameraInfo(sceneView.camera);
                 return;
             }
-#else
-            // In Builds, use the main camera directly
-            if (Camera.main != null && Main == null)
-            {
-                SetCameraInfo(Camera.main);
-                return;
-            }
 #endif
+            // In Builds, use the main camera directly
             // Fallback to main camera
             if (Camera.main != null)
             {

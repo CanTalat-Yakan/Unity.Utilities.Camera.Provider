@@ -10,7 +10,7 @@ namespace UnityEssentials
         public static float Distance { get; private set; }
         public static float Height { get; private set; }
 
-        [InitializeOnLoadMethod()]
+        [RuntimeInitializeOnLoadMethod()]
         public static void Initialize() =>
             PlayerLoopHook.Add<Update>(GetCurrentRenderingCameraInfo);
 

@@ -16,6 +16,9 @@ namespace UnityEssentials
 
         public static void SetCameraInfo(Camera camera)
         {
+            if (camera == null)
+                return;
+
             Distance = camera.transform.position.magnitude;
             Height = camera.transform.position.y;
             Main = camera;
@@ -24,21 +27,36 @@ namespace UnityEssentials
         private static void GetCurrentRenderingCameraInfo()
         {
 #if UNITY_EDITOR
-            // Prefer SceneView camera if available and focused
-            var sceneView = SceneView.lastActiveSceneView;
-            if (sceneView != null && sceneView?.camera != null && sceneView.hasFocus)
+            if (!Application.isPlaying)
             {
-                SetCameraInfo(sceneView.camera);
+                SetCameraInfo(GetSceneViewCamera());
                 return;
             }
 #endif
-            // In Builds, use the main camera directly
-            // Fallback to main camera
+            SetCameraInfo(GetActiveCamera());
+        }
+
+        private static Camera GetSceneViewCamera()
+        {
+            var sceneView = SceneView.lastActiveSceneView;
+            if (sceneView != null && sceneView.camera != null)
+                if (sceneView.hasFocus)
+                    return sceneView.camera;
+            return null;
+        }
+
+        private static Camera GetActiveCamera()
+        {
             if (Camera.main != null)
-            {
-                SetCameraInfo(Camera.main);
-                return;
-            }
+                return Camera.main;
+            if (Camera.current != null)
+                return Camera.current;
+            foreach (var camera in Camera.allCameras)
+                if (camera.targetTexture != null)
+                    return camera;
+            if (Camera.allCamerasCount > 0)
+                return Camera.allCameras[0];
+            return null;
         }
     }
 }

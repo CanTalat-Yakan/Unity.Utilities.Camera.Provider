@@ -6,7 +6,7 @@ namespace UnityEssentials
 {
     public static class CameraProvider
     {
-        public static Camera Main { get; private set; }
+        public static Camera Active { get; private set; }
         public static float Distance { get; private set; }
         public static float Height { get; private set; }
 
@@ -21,7 +21,7 @@ namespace UnityEssentials
 
             Distance = camera.transform.position.magnitude;
             Height = camera.transform.position.y;
-            Main = camera;
+            Active = camera;
         }
 
         private static void GetCurrentRenderingCameraInfo()

@@ -1,6 +1,6 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEditor;
 
 namespace UnityEssentials
 {
@@ -24,24 +24,17 @@ namespace UnityEssentials
             Active = camera;
         }
 
-        private static void GetCurrentRenderingCameraInfo()
-        {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                SetCameraInfo(GetSceneViewCamera());
-                return;
-            }
-#endif
-            SetCameraInfo(GetActiveCamera());
-        }
+        private static void GetCurrentRenderingCameraInfo() =>
+            SetCameraInfo(Application.isPlaying ? GetActiveCamera() : GetSceneViewCamera());
 
         private static Camera GetSceneViewCamera()
         {
+#if UNITY_EDITOR
             var sceneView = SceneView.lastActiveSceneView;
             if (sceneView != null && sceneView.camera != null)
                 if (sceneView.hasFocus)
                     return sceneView.camera;
+#endif
             return null;
         }
 
